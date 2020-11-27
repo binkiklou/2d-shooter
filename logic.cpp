@@ -34,7 +34,7 @@ void logic::run_logic()
 	else
 	{
 		message m;
-		m.opcode = WORLD_CALLBACK_IF_CHANGED;
+		m.opcode = WORLD_CALLBACK_ON_TICK;
 		m.data.push_back(LOGIC_UPDATE_SCRIPTS);
 		m.data.push_back((size_t)this);
 		this->w_ptr->push_message(m);

@@ -43,12 +43,12 @@ void world::check_queue()
 
 		while (!this->m_queue.empty())
 		{
-			std::cout << "this shit aint empty" << std::endl;
 			message m = m_queue.front();
 
-			switch (m.opcode)
-			{
-			case WORLD_GET_OBJECTS:
+			// Well switch statements did some 
+			// weird things, so this is a chain
+			// of if statements now.
+			if (m.opcode == WORLD_GET_OBJECTS)
 			{
 				filter();
 
@@ -57,14 +57,12 @@ void world::check_queue()
 
 				message request;
 				request.opcode = opc;
-				
+
 				request.data.push_back((size_t)&this->objects);
 
 				ptr->push_message(request);
-				break;
 			}
-
-			case WORLD_CALLBACK_IF_CHANGED:
+			else if (m.opcode == WORLD_CALLBACK_IF_CHANGED)
 			{
 				size_t opc = m.data.at(0);
 				server* ptr = (server*)m.data.at(1);
@@ -76,9 +74,8 @@ void world::check_queue()
 				this->change_cb.push_back(value);
 
 				changed = true;
-				break;
 			}
-			case WORLD_CALLBACK_ON_TICK:
+			else if (m.opcode == WORLD_CALLBACK_ON_TICK)
 			{
 				size_t opc = m.data.at(0);
 				server* ptr = (server*)m.data.at(1);
@@ -89,10 +86,8 @@ void world::check_queue()
 
 				std::cout << "Pushed server to world callback on tick" << std::endl;
 				this->tick_cb.push_back(value);
-				break;
 			}
-
-			case WORLD_PUSH_OBJECT:
+			else if (m.opcode == WORLD_PUSH_OBJECT)
 			{
 				object* ptr = (object*)m.data.at(0);
 				object tmp = *ptr;
@@ -100,26 +95,18 @@ void world::check_queue()
 				this->objects.back().id = this->objects.size();
 
 				changed = true;
-				break;
 			}
-				//--- PHYSICS IS ALWAYS DONE LAST---
-			case WORLD_PHYSICS_MOVE_OBJECT:
+			else if (
+				m.opcode == WORLD_PHYSICS_MOVE_OBJECT || 
+				m.opcode == WORLD_PHYSICS_ROTATE_OBJECT
+				)
 			{
 				p_queue.push(m);
 				changed = true;
-				break;
 			}
-			case WORLD_PHYSICS_ROTATE_OBJECT:
-			{
-				p_queue.push(m);
-				changed = true;
-				break;
-			}
-			case WORLD_QUIT:
+			else if (m.opcode == WORLD_QUIT)
 			{
 				this->running = false;
-				break;
-			}
 			}
 
 			this->m_queue.pop();
@@ -149,7 +136,6 @@ void world::check_queue()
 		{
 			if (cb.second != nullptr)
 			{
-				std::cout << "yeet" << std::endl;
 				message m;
 				m.opcode = cb.first;
 				cb.second->push_message(m);
