@@ -1,7 +1,9 @@
 #include "logic.hpp"
 
 #include "logic_opcodes.hpp"
+#include "world_opcodes.hpp"
 
+#include <chrono>
 #include <iostream>
 
 logic::logic()
@@ -24,6 +26,20 @@ void logic::run_logic()
 {
 	std::cout<<"Logic server started" << std::endl;
 
+	if (this->w_ptr == nullptr)
+	{
+		std::cout << "[LOGIC] World Pointer is invalid, qutting" << std::endl;
+		this->running = false;
+	}
+	else
+	{
+		message m;
+		m.opcode = WORLD_CALLBACK_IF_CHANGED;
+		m.data.push_back(LOGIC_UPDATE_SCRIPTS);
+		m.data.push_back((size_t)this);
+		this->w_ptr->push_message(m);
+	}
+
 	while (this->running)
 	{
 		this->mtx.lock();
@@ -34,26 +50,31 @@ void logic::run_logic()
 			switch (m.opcode)
 			{
 			case LOGIC_PUSH_SCRIPT:
+			{
 				push_script(m);
 				break;
+			}
 			case LOGIC_GET_WORLD_PTR:
 			{
 				world* ptr = (world*)m.data.at(0);
 				ptr = w_ptr;
-			}
 				break;
+			}
+			case LOGIC_UPDATE_SCRIPTS:
+			{
+				for (script* s : this->scripts)
+				{
+					if (s != nullptr)
+					{
+						s->update();
+					}
+				}
+
+				break; 
+			}
 			}
 
 			m_queue.pop();
-		}
-
-		for (script* s : this->scripts)
-		{
-			if (s != nullptr)
-			{
-				s->update();
-			}
-			// Improvement: Destroy the script if it's null
 		}
 		this->mtx.unlock();
 	}

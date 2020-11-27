@@ -2,7 +2,6 @@
 
 #include "world_opcodes.hpp"
 
-#include <chrono>
 #include <iostream>
 
 void world::start()
@@ -10,6 +9,8 @@ void world::start()
 	this->running = true;
 
 	this->m_thread = std::thread(&world::check_queue, this);
+	
+	this->last_tick = std::chrono::high_resolution_clock::now();
 }
 
 void world::filter()
@@ -42,6 +43,7 @@ void world::check_queue()
 
 		while (!this->m_queue.empty())
 		{
+			std::cout << "this shit aint empty" << std::endl;
 			message m = m_queue.front();
 
 			switch (m.opcode)
@@ -49,9 +51,6 @@ void world::check_queue()
 			case WORLD_GET_OBJECTS:
 			{
 				filter();
-
-				//std::cout << "Request for object vector" << std::endl;
-				//std::cout << "Size is: " << this->objects.size() << std::endl;
 
 				size_t opc = m.data.at(0);
 				server* ptr = (server*)m.data.at(1);
@@ -62,8 +61,8 @@ void world::check_queue()
 				request.data.push_back((size_t)&this->objects);
 
 				ptr->push_message(request);
-			}
 				break;
+			}
 
 			case WORLD_CALLBACK_IF_CHANGED:
 			{
@@ -74,11 +73,24 @@ void world::check_queue()
 				value.first = opc;
 				value.second = ptr;
 
-				this->callbacks.push_back(value);
+				this->change_cb.push_back(value);
 
 				changed = true;
-			}
 				break;
+			}
+			case WORLD_CALLBACK_ON_TICK:
+			{
+				size_t opc = m.data.at(0);
+				server* ptr = (server*)m.data.at(1);
+
+				std::pair<size_t, server*> value;
+				value.first = opc;
+				value.second = ptr;
+
+				std::cout << "Pushed server to world callback on tick" << std::endl;
+				this->tick_cb.push_back(value);
+				break;
+			}
 
 			case WORLD_PUSH_OBJECT:
 			{
@@ -88,22 +100,26 @@ void world::check_queue()
 				this->objects.back().id = this->objects.size();
 
 				changed = true;
+				break;
 			}
-				break;
-				// PHYSICS IS ALWAYS DONE LAST
+				//--- PHYSICS IS ALWAYS DONE LAST---
 			case WORLD_PHYSICS_MOVE_OBJECT:
+			{
 				p_queue.push(m);
 				changed = true;
 				break;
-
+			}
 			case WORLD_PHYSICS_ROTATE_OBJECT:
+			{
 				p_queue.push(m);
 				changed = true;
 				break;
-
+			}
 			case WORLD_QUIT:
+			{
 				this->running = false;
 				break;
+			}
 			}
 
 			this->m_queue.pop();
@@ -118,7 +134,7 @@ void world::check_queue()
 
 		if (changed)
 		{
-			for (std::pair<size_t,server*> cb : this->callbacks)
+			for (std::pair<size_t,server*> cb : this->change_cb)
 			{
 				if (cb.second != nullptr)
 				{
@@ -129,10 +145,33 @@ void world::check_queue()
 			}
 		}
 
-		// IMPROVEMENT: Make it so it just sleeps
-		// the remaining time, until next tick.
-		std::this_thread::sleep_for(
-			std::chrono::milliseconds(tickdelay)
-		);
+		for (std::pair<size_t, server*> cb : this->tick_cb)
+		{
+			if (cb.second != nullptr)
+			{
+				std::cout << "yeet" << std::endl;
+				message m;
+				m.opcode = cb.first;
+				cb.second->push_message(m);
+			}
+		}
+
+		// why the fuck does chrono's namespaces
+		// be so long
+		auto now = std::chrono::high_resolution_clock::now();
+		auto d = std::chrono::duration_cast
+			<std::chrono::milliseconds>
+			(now - this->last_tick).count();
+
+		if (d > tickrate)
+		{
+			std::cout << "Ticktime is slow:" << d << std::endl;
+		}
+
+		if (d < (tickrate))
+		{
+			std::this_thread::sleep_for(std::chrono::milliseconds(tickrate - d));
+			this->last_tick = std::chrono::high_resolution_clock::now();
+		}
 	}
 }

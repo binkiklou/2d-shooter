@@ -19,6 +19,7 @@ void game::start()
 
 void game::update()
 {
+	std::cout << "oii mate I be updating" << std::endl;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
 		dir->x = 1;
