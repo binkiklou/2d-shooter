@@ -1,0 +1,114 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="engine">
+      <UniqueIdentifier>{0dea495a-d741-403e-ab53-e00f4a90ab88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="game">
+      <UniqueIdentifier>{d3668533-bdcf-415c-9ca1-3f80e91a7c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\world">
+      <UniqueIdentifier>{ffc37b3d-3ddd-4e9c-b858-6d8b06830120}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\renderer">
+      <UniqueIdentifier>{e88648ff-d906-49ad-bc08-305f453c8e74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="shared">
+      <UniqueIdentifier>{6b0251ee-dfd7-435e-b126-5ffb58a80c0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\wrapper">
+      <UniqueIdentifier>{2032d498-ad2b-4ff5-b53c-94b832a4ef0f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="engine\logic">
+      <UniqueIdentifier>{94d0b4f2-9615-40b7-b4b2-4afb7fd5dae7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="engine.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>engine\renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="world.cpp">
+      <Filter>engine\world</Filter>
+    </ClCompile>
+    <ClCompile Include="server.cpp">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="message.cpp">
+      <Filter>shared</Filter>
+    </ClCompile>
+    <ClCompile Include="wrapper.cpp">
+      <Filter>engine\wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>engine\world</Filter>
+    </ClCompile>
+    <ClCompile Include="script.cpp">
+      <Filter>engine\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="logic.cpp">
+      <Filter>engine\logic</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cpp">
+      <Filter>game</Filter>
+    </ClCompile>
+    <ClCompile Include="transforms.cpp">
+      <Filter>engine\world</Filter>
+    </ClCompile>
+    <ClCompile Include="raycast.cpp">
+      <Filter>engine\renderer</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="engine.hpp">
+      <Filter>engine</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.hpp">
+      <Filter>engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="world.hpp">
+      <Filter>engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="server.hpp">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="message.hpp">
+      <Filter>shared</Filter>
+    </ClInclude>
+    <ClInclude Include="wrapper.hpp">
+      <Filter>engine\wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="object.hpp">
+      <Filter>engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="script.hpp">
+      <Filter>engine\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="logic.hpp">
+      <Filter>engine\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="game.hpp">
+      <Filter>game</Filter>
+    </ClInclude>
+    <ClInclude Include="logic_opcodes.hpp">
+      <Filter>engine\logic</Filter>
+    </ClInclude>
+    <ClInclude Include="transforms.hpp">
+      <Filter>engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="render_opcodes.hpp">
+      <Filter>engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="world_opcodes.hpp">
+      <Filter>engine\world</Filter>
+    </ClInclude>
+    <ClInclude Include="raycast.hpp">
+      <Filter>engine\renderer</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
