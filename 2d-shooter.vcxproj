@@ -26,7 +26,7 @@
     <ClCompile Include="message.cpp" />
     <ClCompile Include="object.cpp" />
     <ClCompile Include="physics.cpp" />
-    <ClCompile Include="raycast.cpp" />
+    <ClCompile Include="ray.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="script.cpp" />
     <ClCompile Include="server.cpp" />
@@ -42,7 +42,7 @@
     <ClInclude Include="message.hpp" />
     <ClInclude Include="object.hpp" />
     <ClInclude Include="physics.hpp" />
-    <ClInclude Include="raycast.hpp" />
+    <ClInclude Include="ray.hpp" />
     <ClInclude Include="renderer.hpp" />
     <ClInclude Include="render_opcodes.hpp" />
     <ClInclude Include="script.hpp" />

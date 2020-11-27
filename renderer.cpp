@@ -3,10 +3,10 @@
 #include "world_opcodes.hpp"
 #include "render_opcodes.hpp"
 
-#include "raycast.hpp"
-
 #include <iostream>
 #include <chrono>
+
+#define FOV 80
 
 renderer::renderer(world* w)
 {
@@ -80,12 +80,6 @@ void renderer::render()
 
 	r_win.create(sf::VideoMode(800, 600), "Test");
 
-	//this->r_win.setFramerateLimit(60);
-
-	raycaster raycaster;
-
-	raycaster.reset(this->width,0);
-
 	// Then we would have a problem
 	if (this->world_ptr != nullptr)
 	{
@@ -102,6 +96,9 @@ void renderer::render()
 	}
 
 	std::vector<sf::Uint8> buffer(width * height * 4);
+
+	std::cout << buffer.size() << std::endl;
+
 	sf::RectangleShape sprite;
 	sf::Texture texture;
 
@@ -113,23 +110,16 @@ void renderer::render()
 		)
 	);
 
+
+	// Wait for camera to be added
+	while (local_objects.size() == 0) {
+		check_queue();
+	}
+
 	while (this->r_win.isOpen() && this->running)
 	{
 		auto t1 = std::chrono::high_resolution_clock::now();
 		this->check_queue();
-
-		if (this->changed)
-		{
-			int cAngle = 0;
-
-			if (this->local_objects.size() > 0)
-			{
-				cAngle = this->local_objects.at(0).angle;
-			}
-
-			raycaster.reset(width,cAngle);
-			this->changed = false;
-		}
 
 		sf::Event event;
 		while (this->r_win.pollEvent(event))
@@ -145,54 +135,90 @@ void renderer::render()
 		}
 
 		this->r_win.clear();
+
+		object cam = local_objects.at(0);
+
 		// ==== RAYCASTING ====
-		if (this->local_objects.size() > 0)
-		{
-			raycaster.reset(width, this->local_objects.at(0).angle);
-		}
-		else
-		{
-			raycaster.reset(width, 0);
-		}
 
-		raycaster.local_objects = this->local_objects;
-		raycaster.raycast(100);
+		// Deviation in angle
+		float da = (float)FOV / this->width;
+		float angle = cam.angle - (da*(FOV/2));
 
-		int x = 0;
-		for (const ray& r : raycaster.rays)
+		for (int x = -(width/2); x < (width/2); x++)
 		{
-			if (r.hit)
+			angle = (cam.angle - (da * (FOV / 2))) + (x*da);
+
+			vector2 dir = vector2(std::cosf(angle * (3.14f/180.f)),std::sinf(angle * (3.14f / 180.f)) );
+		//	dir.print();
+
+			bool hit = false;
+
+			for (int i = 0; i < 100; i++)
 			{
-				/*
-				float p = r.distance * std::cosf(
-					std::abs(r.angle - this->local_objects.at(0).angle)
-				);
-				*/
+				if (hit)
+					break;
 
-				//int offset = std::abs(r.angle - this->local_objects.at(0).angle);
-				//float offset = (300/r.distance);//(300 / r.distance) * 0.42;
-				int offset = (64 / r.distance) * (width / 2 / std::tan(40 * (3.1415 / 180)));
+				vector2 p = cam.pos + (dir * i * 2);
+				//p.x = p.x * i;
+				//p.y = p.y * i;
 
-				std::cout << offset << std::endl;
-
-				for (int y = (height/2)  - ((int)offset/2); y < (height/2) + ((int)offset/2);y++)
+				for (object obj : this->local_objects)
 				{
-					sf::Uint8* ptr = &buffer.at( (y * width + x) * 4);
-					ptr[0] = r.r;
-					ptr[1] = r.g;
-					ptr[2] = r.b;
-					ptr[3] = 255;
+					if (hit)
+						break;
+
+					for (vector2 tile : obj.tiles)
+					{
+						if (
+							p.x >= obj.pos.x + (tile.x - 16) &&
+							p.y >= obj.pos.y + (tile.y - 16) &&
+							p.x <= obj.pos.x + (tile.x + 16) &&
+							p.y <= obj.pos.y + (tile.y + 16))
+						{
+
+							//p.print();
+
+							double dist = std::sqrt(
+								std::powf(std::abs(cam.pos.x - (p.x+16)), 2)
+								+
+								std::powf(std::abs(cam.pos.y - (p.y+16)), 2)
+							);
+
+							//dist = std::cosf((float)FOV/2) * dist;
+
+							double h = 16 / dist * (width / 2 / std::tan((FOV / 2) * (3.1415 / 180)));
+
+							if (h >= height)
+							{
+								h = height - 1;
+							}
+
+							for (int y = (height/2) - (h/2); y < (height/2) + (h/2); y++)
+							{
+								sf::Uint8* ptr = &buffer.at((y * (width) + (x + (width/2))) * 4);
+								int col = 255;
+								ptr[0] = col; //- (dist / 100);
+								ptr[1] = col; //- (dist / 100);
+								ptr[2] = col; //- (dist / 100);
+								ptr[3] = col; //- (dist / 100);
+							}
+
+							hit = true;
+
+							if(hit)
+								break;
+						}
+					}
 				}
 			}
-			x++;
 		}
+
+		// ================================
 
 		sprite.setTexture(&texture);
 		texture.update(buffer.data());
 		this->r_win.draw(sprite);
-		std::memset(buffer.data(), 0,buffer.size());
-		// ================================
-
+		std::memset(buffer.data(), 0, buffer.size());
 		this->r_win.display();
 
 		auto t2 = std::chrono::high_resolution_clock::now();

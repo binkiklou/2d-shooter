@@ -45,7 +45,7 @@ void engine::start()
 
 	// Should be removed
 	object* tmp = new object;
-	tmp->pos = vector2(5,0);
+	tmp->pos = vector2(25,0);
 	tmp->angle = 0;
 	tmp->tiles.push_back(vector2(0,0));
 	message req;
