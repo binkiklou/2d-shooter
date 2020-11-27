@@ -36,6 +36,12 @@ void logic::run_logic()
 			case LOGIC_PUSH_SCRIPT:
 				push_script(m);
 				break;
+			case LOGIC_GET_WORLD_PTR:
+			{
+				world* ptr = (world*)m.data.at(0);
+				ptr = w_ptr;
+			}
+				break;
 			}
 
 			m_queue.pop();
@@ -58,5 +64,6 @@ void logic::push_script(message m)
 	size_t addr = m.data.at(0);
 	script* s = (script*)addr;
 	this->scripts.push_back(s);
+	this->scripts.back()->w_ptr = this->w_ptr;
 	this->scripts.back()->start();
 }

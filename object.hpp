@@ -9,11 +9,12 @@ class object
 public:
 	object();
 
+	// Transforms
 	vector2 pos;
-
-	float angle = 0;
-
+	int angle = 0;
 	std::pair<vector2, vector2> coords;
+
+	int id = -1;
 };
 
 class camera : public object

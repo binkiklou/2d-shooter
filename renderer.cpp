@@ -10,7 +10,7 @@
 renderer::renderer(world* w)
 {
 	this->world_ptr = w;
-
+	this->changed = true;
 	this->width = 800;
 	this->height = 600;
 }
@@ -47,6 +47,8 @@ void renderer::check_queue()
 				request.data.push_back((size_t)this);
 
 				this->world_ptr->push_message(request);
+
+				this->changed = true;
 			}
 				break;
 			case RENDER_SET_OBJECTS:
@@ -90,6 +92,7 @@ void renderer::render()
 	}
 
 	std::vector<sf::Uint8> buffer((int)(width * height * 4));
+	std::cout << buffer.size() << std::endl;
 	sf::RectangleShape sprite;
 	sf::Texture texture;
 
@@ -104,6 +107,12 @@ void renderer::render()
 	while (this->r_win.isOpen() && this->running)
 	{
 		this->check_queue();
+
+		if (this->changed)
+		{
+			raycaster.reset(width);
+			this->changed = false;
+		}
 
 		sf::Event event;
 		while (this->r_win.pollEvent(event))
@@ -120,6 +129,7 @@ void renderer::render()
 
 		this->r_win.clear();
 		// ==== RAYCASTING ====
+		raycaster.reset(this->width);
 		raycaster.local_objects = this->local_objects;
 		raycaster.raycast(100);
 

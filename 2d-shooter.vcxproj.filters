@@ -63,6 +63,9 @@
     <ClCompile Include="raycast.cpp">
       <Filter>engine\renderer</Filter>
     </ClCompile>
+    <ClCompile Include="physics.cpp">
+      <Filter>engine\world</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="engine.hpp">
@@ -109,6 +112,9 @@
     </ClInclude>
     <ClInclude Include="raycast.hpp">
       <Filter>engine\renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="physics.hpp">
+      <Filter>engine\world</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

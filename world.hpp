@@ -12,8 +12,15 @@ class world : public server
 public:
 	void start() override;
 private:
+	void filter();
+
+	void update_physics(std::queue<message>);
+
 	// Updates the world, in a different thread
 	void check_queue();
+
+	// Physics functions
+	void move(int,vector2);
 
 	short int tickrate = 30;
 

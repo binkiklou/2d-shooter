@@ -8,4 +8,7 @@ public:
 	game();
 	void start() override;
 	void update() override;
+private:
+	vector2* dir;
+	int* angle;
 };

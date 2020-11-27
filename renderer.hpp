@@ -25,4 +25,6 @@ private:
 
 	int width;
 	int height;
+
+	bool changed;
 };

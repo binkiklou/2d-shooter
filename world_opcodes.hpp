@@ -13,3 +13,14 @@
 // Pushes object to object vector
 // 0 - Pointer to object
 #define WORLD_PUSH_OBJECT 2
+
+// Moves object in the world
+// 0 - Object ID
+// 1 - Pointer to Vector2 of direction
+#define WORLD_PHYSICS_MOVE_OBJECT 10
+
+// 0 - Object ID
+// 1 - Pointer to float for angle
+#define WORLD_PHYSICS_ROTATE_OBJECT 11
+
+#define WORLD_QUIT 255

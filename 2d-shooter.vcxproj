@@ -25,6 +25,7 @@
     <ClCompile Include="logic.cpp" />
     <ClCompile Include="message.cpp" />
     <ClCompile Include="object.cpp" />
+    <ClCompile Include="physics.cpp" />
     <ClCompile Include="raycast.cpp" />
     <ClCompile Include="renderer.cpp" />
     <ClCompile Include="script.cpp" />
@@ -40,6 +41,7 @@
     <ClInclude Include="logic_opcodes.hpp" />
     <ClInclude Include="message.hpp" />
     <ClInclude Include="object.hpp" />
+    <ClInclude Include="physics.hpp" />
     <ClInclude Include="raycast.hpp" />
     <ClInclude Include="renderer.hpp" />
     <ClInclude Include="render_opcodes.hpp" />

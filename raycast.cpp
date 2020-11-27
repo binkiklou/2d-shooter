@@ -33,15 +33,18 @@ void raycaster::raycast(int limit)
 {
 	for (ray& r : this->rays)
 	{
-		if (!r.hit)
+		if (!r.hit && local_objects.size() > 0)
 		{
+			// Camera will always be the object with id 0
+			vector2 c_pos = local_objects.at(0).pos;
+
 			for (int i = 0; i < limit; i++)
 			{
 				if (r.hit)
 					break;
 
-				vector2 p1 = r.direction * (i - 1);
-				vector2 q1 = r.direction * i;
+				vector2 p1 = c_pos + (r.direction * (i - 1));
+				vector2 q1 = c_pos + (r.direction * i);
 
 				for (const object& obj : this->local_objects)
 				{
@@ -57,7 +60,7 @@ void raycaster::raycast(int limit)
 
 					if(o1 != o2 && o3 != o4)
 					{
-						std::cout << "Ray Intersected with wall " << i << std::endl;
+					//	std::cout << "Ray Intersected with wall " << i << std::endl;
 						r.distance = i;
 						r.hit = true;
 
@@ -76,6 +79,7 @@ void raycaster::reset(int width)
 {
 	if (this->clean.empty() || this->clean.size() != width)
 	{
+		//std::cout << "OH NO" << std::endl;
 		// FOV is hardcoded rn
 		float d = (float)80 / width;
 		for (int x = -40; x < width; x++)
