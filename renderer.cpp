@@ -6,6 +6,7 @@
 #include "raycast.hpp"
 
 #include <iostream>
+#include <chrono>
 
 renderer::renderer(world* w)
 {
@@ -30,6 +31,7 @@ void renderer::check_queue()
 {
 	if (m_queue.size() > 0)
 	{
+		auto t1 = std::chrono::high_resolution_clock::now();
 		this->mtx.lock();
 
 		while (!m_queue.empty())
@@ -61,6 +63,14 @@ void renderer::check_queue()
 		}
 
 		this->mtx.unlock();
+		auto t2 = std::chrono::high_resolution_clock::now();
+
+		auto d = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+		if (d > 60)
+		{
+			std::cout << "Checking queue slow: " << d << std::endl;
+		}
+		//std::cout << "Checking queue took" << d << std::endl;
 	}
 }
 
@@ -70,11 +80,11 @@ void renderer::render()
 
 	r_win.create(sf::VideoMode(800, 600), "Test");
 
-	this->r_win.setFramerateLimit(60);
+	//this->r_win.setFramerateLimit(60);
 
 	raycaster raycaster;
 
-	raycaster.reset(this->width);
+	raycaster.reset(this->width,0);
 
 	// Then we would have a problem
 	if (this->world_ptr != nullptr)
@@ -91,8 +101,7 @@ void renderer::render()
 		world_ptr->push_message(m);
 	}
 
-	std::vector<sf::Uint8> buffer((int)(width * height * 4));
-	std::cout << buffer.size() << std::endl;
+	std::vector<sf::Uint8> buffer(width * height * 4);
 	sf::RectangleShape sprite;
 	sf::Texture texture;
 
@@ -106,11 +115,19 @@ void renderer::render()
 
 	while (this->r_win.isOpen() && this->running)
 	{
+		auto t1 = std::chrono::high_resolution_clock::now();
 		this->check_queue();
 
 		if (this->changed)
 		{
-			raycaster.reset(width);
+			int cAngle = 0;
+
+			if (this->local_objects.size() > 0)
+			{
+				cAngle = this->local_objects.at(0).angle;
+			}
+
+			raycaster.reset(width,cAngle);
 			this->changed = false;
 		}
 
@@ -129,7 +146,15 @@ void renderer::render()
 
 		this->r_win.clear();
 		// ==== RAYCASTING ====
-		raycaster.reset(this->width);
+		if (this->local_objects.size() > 0)
+		{
+			raycaster.reset(width, this->local_objects.at(0).angle);
+		}
+		else
+		{
+			raycaster.reset(width, 0);
+		}
+
 		raycaster.local_objects = this->local_objects;
 		raycaster.raycast(100);
 
@@ -158,8 +183,16 @@ void renderer::render()
 		sprite.setTexture(&texture);
 		texture.update(buffer.data());
 		this->r_win.draw(sprite);
+		std::memset(buffer.data(), 0,buffer.size());
 		// ================================
 
 		this->r_win.display();
+
+		auto t2 = std::chrono::high_resolution_clock::now();
+		auto d = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+		if (d > 60)
+		{
+			std::cout << "Renderer slow: "<<d<<std::endl;
+		}
 	}
 }

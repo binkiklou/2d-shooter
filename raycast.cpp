@@ -3,6 +3,7 @@
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <chrono>
 
 // Modified from geeksforgeeks
 //	https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/
@@ -31,6 +32,7 @@ int raycaster::orientation(
 
 void raycaster::raycast(int limit)
 {
+	auto t1 = std::chrono::high_resolution_clock::now();
 	for (ray& r : this->rays)
 	{
 		if (!r.hit && local_objects.size() > 0)
@@ -73,25 +75,37 @@ void raycaster::raycast(int limit)
 			}
 		}
 	}
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto d = std::chrono::duration_cast<std::chrono::milliseconds>(t2 - t1).count();
+
+	if (d > 60)
+	{
+		std::cout << "Raycasting slow: " << d << std::endl;
+	}
+	//std::cout << "Raycasting took:" << d << std::endl;
 }
 
-void raycaster::reset(int width)
+void raycaster::reset(int width,int a)
 {
-	if (this->clean.empty() || this->clean.size() != width)
+	auto t1 = std::chrono::high_resolution_clock::now();
+	if (this->clean.empty() ||
+		this->last_width != width || 
+		this->last_angle != a)
 	{
-		//std::cout << "OH NO" << std::endl;
-		// FOV is hardcoded rn
+		this->clean.clear();
 		float d = (float)80 / width;
-		for (int x = -40; x < width; x++)
+		for (int x = -(width/2); x < (width/2); x++)
 		{
 			ray r;
 			r.hit = false;
 			r.direction = vector2(
-				std::cosf( (x * d) * (3.1415/180) ),
-				std::sinf( (x * d) * (3.1415/180) )
+				std::cosf( ((x * d) + a) * (3.1415/180) ),
+				std::sinf( ((x * d) + a)* (3.1415/180) )
 			);
 			this->clean.push_back(r);
 		}
 	}
+	auto t2 = std::chrono::high_resolution_clock::now();
+	auto d = std::chrono::duration_cast<std::chrono::milliseconds>(t2-t1).count();
 	this->rays = clean;
 }

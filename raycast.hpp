@@ -23,13 +23,15 @@ class raycaster
 {
 public:
 	void raycast(int);
-	void reset(int);
+	void reset(int,int);
 
 	bool on_segment(vector2, vector2, vector2);
 	int orientation(vector2, vector2, vector2);
 
 	std::vector<ray> rays;
 	std::vector<ray> clean;
-
 	std::vector<object> local_objects;
+private:
+	int last_width = 0;
+	int last_angle = 0;
 };
