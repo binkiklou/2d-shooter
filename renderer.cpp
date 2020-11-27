@@ -163,12 +163,19 @@ void renderer::render()
 		{
 			if (r.hit)
 			{
-				// This is a mess
-				int offset = (height / 2) - (r.distance * (height / 100));
+				/*
+				float p = r.distance * std::cosf(
+					std::abs(r.angle - this->local_objects.at(0).angle)
+				);
+				*/
 
-				//std::cout << offset << std::endl;
+				//int offset = std::abs(r.angle - this->local_objects.at(0).angle);
+				//float offset = (300/r.distance);//(300 / r.distance) * 0.42;
+				int offset = (64 / r.distance) * (width / 2 / std::tan(40 * (3.1415 / 180)));
 
-				for (int y = (height/2) - (offset-1);y < (height/2) + (offset-1);y++)
+				std::cout << offset << std::endl;
+
+				for (int y = (height/2)  - ((int)offset/2); y < (height/2) + ((int)offset/2);y++)
 				{
 					sf::Uint8* ptr = &buffer.at( (y * width + x) * 4);
 					ptr[0] = r.r;

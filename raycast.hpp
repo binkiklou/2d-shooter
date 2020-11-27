@@ -9,6 +9,7 @@ class ray
 public:
 	vector2 direction;
 
+	float angle;
 	float distance;
 	bool hit = false;
 
@@ -24,9 +25,6 @@ class raycaster
 public:
 	void raycast(int);
 	void reset(int,int);
-
-	bool on_segment(vector2, vector2, vector2);
-	int orientation(vector2, vector2, vector2);
 
 	std::vector<ray> rays;
 	std::vector<ray> clean;

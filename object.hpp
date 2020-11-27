@@ -2,7 +2,7 @@
 
 #include "transforms.hpp"
 
-#include <utility>
+#include <vector>
 
 class object
 {
@@ -12,7 +12,7 @@ public:
 	// Transforms
 	vector2 pos;
 	int angle = 0;
-	std::pair<vector2, vector2> coords;
+	std::vector<vector2> tiles;
 
 	int id = -1;
 };

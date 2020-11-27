@@ -96,6 +96,12 @@ void world::check_queue()
 
 				changed = true;
 			}
+			else if (m.opcode == WORLD_GET_OBJECT)
+			{
+				int id = (int)m.data.at(0);
+				object* ptr = (object*)m.data.at(1);
+				*ptr = this->objects.at(id);
+			}
 			else if (
 				m.opcode == WORLD_PHYSICS_MOVE_OBJECT || 
 				m.opcode == WORLD_PHYSICS_ROTATE_OBJECT

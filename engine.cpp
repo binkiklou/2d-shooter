@@ -47,12 +47,22 @@ void engine::start()
 	object* tmp = new object;
 	tmp->pos = vector2(5,0);
 	tmp->angle = 0;
-	tmp->coords.first = vector2(0,0);
-	tmp->coords.second = vector2(0,3);
+	tmp->tiles.push_back(vector2(0,0));
 	message req;
 	req.opcode = WORLD_PUSH_OBJECT;
 	req.data.push_back((size_t)tmp);
 	this->w->push_message(req);
+
+	/*
+	object* tmp2 = new object;
+	tmp2->pos = vector2(10, 5);
+	tmp2->angle = 0;
+	tmp2->tiles.push_back(vector2(0, 0));
+	message req2;
+	req2.opcode = WORLD_PUSH_OBJECT;
+	req2.data.push_back((size_t)tmp);
+	this->w->push_message(req2);
+	*/
 }
 
 void engine::update()

@@ -18,6 +18,11 @@
 // 0 - Pointer to object
 #define WORLD_PUSH_OBJECT 3
 
+// Returns object at given ID
+// 0 - ID
+// 1 - Pointer to object
+#define WORLD_GET_OBJECT 4
+
 // Moves object in the world
 // 0 - Object ID
 // 1 - Pointer to Vector2 of direction
