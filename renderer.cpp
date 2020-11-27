@@ -89,9 +89,17 @@ void renderer::render()
 		world_ptr->push_message(m);
 	}
 
-	std::vector<sf::Uint8> buffer(width * height * 4);
+	std::vector<sf::Uint8> buffer((int)(width * height * 4));
 	sf::RectangleShape sprite;
 	sf::Texture texture;
+
+	texture.create(width,height);
+	sprite.setSize(
+		sf::Vector2f(
+			width,
+			height
+		)
+	);
 
 	while (this->r_win.isOpen() && this->running)
 	{
@@ -106,38 +114,40 @@ void renderer::render()
 				//this->ok = false;
 				this->r_win.close();
 				this->running = false;
+				break;
 			}
 		}
 
 		this->r_win.clear();
 		// ==== RAYCASTING ====
-
-		int x = 0;
 		raycaster.local_objects = this->local_objects;
 		raycaster.raycast(100);
 
+		int x = 0;
 		for (const ray& r : raycaster.rays)
 		{
 			if (r.hit)
 			{
-				sf::RectangleShape l;
+				// This is a mess
+				int offset = (height / 2) - (r.distance * (height / 100));
 
-				l.setSize(
-					sf::Vector2f(1.0f, 100.0f - r.distance)
-				);
+				//std::cout << offset << std::endl;
 
-				l.setPosition(
-					sf::Vector2f(
-						x,
-						this->height/ 2
-					)
-				);
-
-				this->r_win.draw(l);
+				for (int y = (height/2) - (offset-1);y < (height/2) + (offset-1);y++)
+				{
+					sf::Uint8* ptr = &buffer.at( (y * width + x) * 4);
+					ptr[0] = r.r;
+					ptr[1] = r.g;
+					ptr[2] = r.b;
+					ptr[3] = 255;
+				}
 			}
 			x++;
 		}
 
+		sprite.setTexture(&texture);
+		texture.update(buffer.data());
+		this->r_win.draw(sprite);
 		// ================================
 
 		this->r_win.display();

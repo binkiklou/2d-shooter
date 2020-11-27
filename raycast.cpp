@@ -46,7 +46,9 @@ void raycaster::raycast(int limit)
 				for (const object& obj : this->local_objects)
 				{
 					vector2 p2 = obj.coords.first;
+					p2 = p2 + obj.pos;
 					vector2 q2 = obj.coords.second;
+					q2 = q2 + obj.pos;
 
 					int o1 = this->orientation(p1,q1,p2);
 					int o2 = this->orientation(p1,q1,q2);
@@ -55,9 +57,13 @@ void raycaster::raycast(int limit)
 
 					if(o1 != o2 && o3 != o4)
 					{
-						std::cout << "Ray Intersected with wall" << std::endl;
+						std::cout << "Ray Intersected with wall " << i << std::endl;
 						r.distance = i;
 						r.hit = true;
+
+						r.r = 255;
+						r.g = 255;
+						r.b = 255;
 						break;
 					}
 				}

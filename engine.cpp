@@ -47,8 +47,8 @@ void engine::start()
 	object* tmp = new object;
 	tmp->pos = vector2(5,0);
 	tmp->angle = 0;
-	tmp->coords.first = vector2(-3,0);
-	tmp->coords.second = vector2(3,0);
+	tmp->coords.first = vector2(0,0);
+	tmp->coords.second = vector2(0,3);
 	message req;
 	req.opcode = WORLD_PUSH_OBJECT;
 	req.data.push_back((size_t)tmp);

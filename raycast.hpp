@@ -2,7 +2,7 @@
 
 #include "object.hpp"
 
-#include <vector>
+#include <SFML/Graphics.hpp>
 
 class ray
 {
